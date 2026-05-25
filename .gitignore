@@ -10,16 +10,16 @@
 # =========================
 # NEXT.JS
 # =========================
-frontend/.next
-frontend/out
-frontend/node_modules
-frontend/.vercel
+*/.next
+*/out
+*/node_modules
+*/.vercel
 
 # logs
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
-frontend/pnpm-debug.log*
+*/npm-debug.log*
+*/yarn-debug.log*
+*/yarn-error.log*
+*/pnpm-debug.log*
 
 # macOS
 frontend/.DS_Store

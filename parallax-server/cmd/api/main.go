@@ -5,9 +5,11 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 
 	"github.com/ishidadecol/parallax/internal/database"
+	"github.com/ishidadecol/parallax/internal/graph"
 	"github.com/ishidadecol/parallax/internal/people"
 	"github.com/ishidadecol/parallax/internal/relationships"
 )
@@ -32,6 +34,21 @@ func main() {
 
 	r := chi.NewRouter()
 
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{
+			"http://localhost:3000",
+		},
+		AllowedMethods: []string{
+			"GET",
+			"POST",
+		},
+		AllowedHeaders: []string{
+			"Accept",
+			"Authorization",
+			"Content-Type",
+		},
+	}))
+
 	r.Post("/people", personHandler.Create)
 
 	//MARK: RELATIONSHIP ROUTE
@@ -44,7 +61,22 @@ func main() {
 	}
 
 	r.Post("/relationships", relationshipHandler.Create)
+
+	//MARK: GRAPH ROUTE
+	graphRepo := &graph.Repository{
+		Driver: driver,
+	}
+
+	graphHandler := &graph.Handler{
+		Repository: graphRepo,
+	}
+
+	r.Get("/graph", graphHandler.GetGraph)
 	log.Println("API running on :8080")
 
-	http.ListenAndServe(":8080", r)
+	err = http.ListenAndServe(":8080", r)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

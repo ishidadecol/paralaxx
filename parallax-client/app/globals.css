@@ -3,7 +3,13 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+.react-flow__edge {
+  z-index: 1;
+}
 
+.react-flow__node {
+  z-index: 2;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
