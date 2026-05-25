@@ -1,2 +1,71 @@
-*/.env
-*.env
+# =========================
+# ENV
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =========================
+# NEXT.JS
+# =========================
+frontend/.next
+frontend/out
+frontend/node_modules
+frontend/.vercel
+
+# logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# macOS
+frontend/.DS_Store
+
+# =========================
+# GO
+# =========================
+backend/bin
+backend/tmp
+backend/vendor
+
+# compiled binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# test binaries
+*.test
+
+# coverage
+*.out
+coverage.out
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# =========================
+# GENERAL
+# =========================
+node_modules
+dist
+build
+coverage
+
+# logs
+*.log
+
+# =========================
+# NEO4J / LOCAL DATA
+# =========================
+data
+neo4j-data
