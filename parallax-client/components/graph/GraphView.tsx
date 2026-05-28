@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { useGraph } from "@/hooks/useGraph";
 import { GraphNode, GraphEdge } from "@/types/graph"; // Import existing types
 
 // Define types for D3 nodes and links
-interface D3GraphNode extends GraphNode, d3.SimulationNodeDatum {}
-interface D3GraphEdge extends GraphEdge, d3.SimulationLinkDatum<D3GraphNode> {}
+interface D3GraphNode extends GraphNode, d3.SimulationNodeDatum { }
+interface D3GraphEdge extends GraphEdge, d3.SimulationLinkDatum<D3GraphNode> { }
 
 export default function GraphView() {
   const svgRef = useRef<SVGSVGElement | null>(null);
