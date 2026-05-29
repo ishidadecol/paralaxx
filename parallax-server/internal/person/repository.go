@@ -16,6 +16,7 @@ func NewRepository(db *pgxpool.Pool) *Repository {
 	}
 }
 
+// MARK: GET ALL
 func (r *Repository) GetAll(ctx context.Context) ([]Person, error) {
 
 	rows, err :=
@@ -27,7 +28,7 @@ func (r *Repository) GetAll(ctx context.Context) ([]Person, error) {
 				birth_date,
 				gender,
 				created_at
-			FROM people
+			FROM person
 		`)
 
 	if err != nil {
@@ -59,4 +60,33 @@ func (r *Repository) GetAll(ctx context.Context) ([]Person, error) {
 	}
 
 	return people, nil
+}
+
+// MARK: CREATE NEW PERSON
+func (r *Repository) Create(ctx context.Context, request CreatePersonInput) (*Person, error) {
+	var person Person
+
+	err := r.db.QueryRow(ctx, `
+		INSERT INTO person (first_name, last_name, birth_date, gender)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, first_name, last_name, birth_date, gender, created_at
+	`,
+		request.FirstName,
+		request.LastName,
+		request.BirthDate,
+		request.Gender,
+	).Scan(
+		&person.ID,
+		&person.FirstName,
+		&person.LastName,
+		&person.BirthDate,
+		&person.Gender,
+		&person.CreatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &person, nil
 }

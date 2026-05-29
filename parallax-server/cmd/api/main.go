@@ -8,28 +8,41 @@ import (
 	"github.com/ishidadecol/parallax/internal/person"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 )
 
 func main() {
+	router := chi.NewRouter()
+
+	// Add CORS middleware
+	router.Use(cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}).Handler)
+
 	// Initialize database connection pool
 	db := database.NewPostgresPool()
 
 	//MARK: Person repository, service, and handler
-	personRepository :=
-		person.NewRepository(db)
+	personRepository := person.NewRepository(db)
 
-	personService :=
-		person.NewService(personRepository)
+	personService := person.NewService(personRepository)
 
-	personHandler :=
-		person.NewHandler(personService)
-
-	router := chi.NewRouter()
+	personHandler := person.NewHandler(personService)
 
 	// Define API routes
 	router.Get(
-		"/people",
+		"/person",
 		personHandler.GetPeople,
+	)
+
+	router.Post(
+		"/person",
+		personHandler.CreatePerson,
 	)
 
 	log.Println("API running on :8080")
