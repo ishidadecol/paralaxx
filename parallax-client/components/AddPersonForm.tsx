@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { CreatePersonRequest } from "../types/person";
+import { Card } from "./ui/card";
+import { Button } from "./ui/button";
 
 interface AddPersonFormProps {
-  onAddPerson: (person: CreatePersonRequest) => Promise<any>;
+  onAddPerson: (person: CreatePersonRequest) => Promise<void>;
   onSuccess: () => void;
 }
 
@@ -14,7 +16,8 @@ const AddPersonForm: React.FC<AddPersonFormProps> = ({ onAddPerson, onSuccess })
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Handle form submission
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -41,12 +44,13 @@ const AddPersonForm: React.FC<AddPersonFormProps> = ({ onAddPerson, onSuccess })
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded-lg shadow-md bg-white">
+    <Card className="cn-card group/card flex flex-col">
+    <form onSubmit={handleSubmit} className="p-4 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Add New Person</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="firstName" className="block text-sm font-medium ">
             First Name:
           </label>
           <input
@@ -55,11 +59,11 @@ const AddPersonForm: React.FC<AddPersonFormProps> = ({ onAddPerson, onSuccess })
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full p-2 border rounded-md shadow-sm"
           />
         </div>
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="lastName" className="block text-sm font-medium">
             Last Name:
           </label>
           <input
@@ -67,11 +71,11 @@ const AddPersonForm: React.FC<AddPersonFormProps> = ({ onAddPerson, onSuccess })
             id="lastName"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full p-2 border shadow-sm"
           />
         </div>
         <div>
-          <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="gender" className="block text-sm font-medium">
             Gender:
           </label>
           <input
@@ -79,11 +83,11 @@ const AddPersonForm: React.FC<AddPersonFormProps> = ({ onAddPerson, onSuccess })
             id="gender"
             value={gender}
             onChange={(e) => setGender(e.target.value)}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full p-2 border  shadow-sm "
           />
         </div>
         <div>
-          <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="birthDate" className="block text-sm font-medium">
             Birth Date:
           </label>
           <input
@@ -91,18 +95,15 @@ const AddPersonForm: React.FC<AddPersonFormProps> = ({ onAddPerson, onSuccess })
             id="birthDate"
             value={birthDate}
             onChange={(e) => setBirthDate(e.target.value)}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full p-2 border shadow-sm"
           />
         </div>
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-      >
+      <Button className="w-full py-2 px-4">
         {loading ? "Adding..." : "Add Person"}
-      </button>
+      </Button>
     </form>
+    </Card>
   );
 };
 

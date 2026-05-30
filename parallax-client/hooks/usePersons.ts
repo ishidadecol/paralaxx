@@ -27,9 +27,8 @@ export const usePersons = () => {
   const addPerson = useCallback(
     async (personData: CreatePersonRequest) => {
       try {
-        const newPerson = await createPerson(personData);
-        setPersons((prevPersons) => [...prevPersons, newPerson]);
-        return newPerson;
+        await createPerson(personData);
+        // No need to update persons state here, fetchPersons will do it
       } catch (err) {
         setError(err instanceof Error ? err.message : "An unknown error occurred");
         throw err; // Re-throw to allow component to handle
