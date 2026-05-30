@@ -62,6 +62,32 @@ func (r *Repository) GetAll(ctx context.Context) ([]Person, error) {
 	return people, nil
 }
 
+// MARK: GET PERSON BY ID
+func (r *Repository) GetById(ctx context.Context, request GetPersonByIdInput) (*Person, error) {
+	var person Person
+
+	row := r.db.QueryRow(ctx, `
+		SELECT * FROM person
+		WHERE id = $1
+	`, request.ID)
+
+	err := row.Scan(
+		&person.ID,
+		&person.FirstName,
+		&person.LastName,
+		&person.BirthDate,
+		&person.Gender,
+		&person.CreatedAt,
+		&person.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &person, nil
+}
+
 // MARK: CREATE NEW PERSON
 func (r *Repository) Create(ctx context.Context, request CreatePersonInput) (*Person, error) {
 	var person Person

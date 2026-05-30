@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { Person, CreatePersonRequest } from "../types/person";
-import { getPeople, createPerson } from "../service/person";
+import { getPeople, createPerson, getPersonById } from "../service/person";
 
 export const usePersons = () => {
-  const [persons, setPersons] = useState<Person[]>([]);
+  const [persons, setPersons] = useState<Person[]>([]); // State for list of persons
+  const [person, setPerson] = useState<Person | null>(null); // New state for single person
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+ 
 
   // Initial data fetch on mount
   useEffect(() => {
@@ -50,6 +52,19 @@ export const usePersons = () => {
       setLoading(false);
     }
   }, []);
+  
+  const fetchPersonById = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getPersonById(id);
+      setPerson(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unknown error occurred");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  return { persons, loading, error, addPerson, fetchPersons };
+  return { person, persons, loading, error, addPerson, fetchPersons, fetchPersonById };
 };

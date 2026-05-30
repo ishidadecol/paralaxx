@@ -2,7 +2,11 @@ package person
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5"
 )
 
 type Handler struct {
@@ -31,6 +35,45 @@ func (h *Handler) GetPeople(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(people)
+}
+
+// MARK: GET PERSON BY ID
+func (h *Handler) GetPersonById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	person, err :=
+		h.service.GetPersonById(
+			r.Context(),
+			id,
+		)
+
+	if err != nil {
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.Error(
+				w,
+				"person not found",
+				http.StatusNotFound,
+			)
+
+			return
+		}
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	json.NewEncoder(w).Encode(person)
 }
 
 // MARK: CREATE NEW PERSON

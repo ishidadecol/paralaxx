@@ -11,3 +11,9 @@ type CreatePersonInput struct {
 	BirthDate *time.Time
 	Gender    *string
 }
+
+// Get Person by ID input struct
+
+type GetPersonByIdInput struct {
+	ID string
+}

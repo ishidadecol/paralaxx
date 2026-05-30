@@ -3,6 +3,8 @@ package person
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Service struct {
@@ -17,6 +19,23 @@ func NewService(repository *Repository) *Service {
 
 func (s *Service) GetPeople(ctx context.Context) ([]Person, error) {
 	return s.repository.GetAll(ctx)
+}
+
+// MARK: GET PERSON BY ID
+func (s *Service) GetPersonById(ctx context.Context, id string) (*Person, error) {
+	_, err := uuid.Parse(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	input := GetPersonByIdInput{
+		ID: id,
+	}
+	return s.repository.GetById(
+		ctx,
+		input,
+	)
 }
 
 // MARK: CREATE NEW PERSON
