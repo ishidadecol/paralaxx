@@ -42,3 +42,21 @@ export const createPerson = async (
   return response.json();
 };
 
+//MARK: UPDATE A PERSON
+export const updatePerson = async (id: string, personData: Partial<CreatePersonRequest>): Promise<Person> => {
+  const response = await fetch(`${API_BASE_URL}/person/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(personData),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Error updating person with ID ${id}: ${response.statusText} - ${errorBody}`
+    );
+  }
+  return response.json();
+}

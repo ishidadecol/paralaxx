@@ -116,3 +116,53 @@ func (r *Repository) Create(ctx context.Context, request CreatePersonInput) (*Pe
 
 	return &person, nil
 }
+
+func (r *Repository) Update(
+	ctx context.Context,
+	request UpdatePersonInput,
+) (*Person, error) {
+
+	var person Person
+
+	err := r.db.QueryRow(
+		ctx,
+		`
+		UPDATE person
+		SET
+			first_name = COALESCE($1, first_name),
+			last_name = COALESCE($2, last_name),
+			birth_date = COALESCE($3, birth_date),
+			gender = COALESCE($4, gender),
+			updated_at = $5
+		WHERE id = $6
+		RETURNING
+			id,
+			first_name,
+			last_name,
+			birth_date,
+			gender,
+			created_at,
+			updated_at
+		`,
+		request.FirstName,
+		request.LastName,
+		request.BirthDate,
+		request.Gender,
+		request.UpdatedAt,
+		request.ID,
+	).Scan(
+		&person.ID,
+		&person.FirstName,
+		&person.LastName,
+		&person.BirthDate,
+		&person.Gender,
+		&person.CreatedAt,
+		&person.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &person, nil
+}

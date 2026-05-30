@@ -107,3 +107,39 @@ func (h *Handler) CreatePerson(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(person)
 }
+
+// MARK: UPDATE PERSON
+func (h *Handler) UpdatePerson(w http.ResponseWriter, r *http.Request) {
+	var request UpdatePersonRequest
+	id := chi.URLParam(r, "id")
+
+	person, err := h.service.Update(r.Context(), request, id)
+
+	if err != nil {
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.Error(
+				w,
+				"person not found",
+				http.StatusNotFound,
+			)
+
+			return
+		}
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	json.NewEncoder(w).Encode(person)
+}

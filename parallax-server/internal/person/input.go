@@ -17,3 +17,12 @@ type CreatePersonInput struct {
 type GetPersonByIdInput struct {
 	ID string
 }
+
+type UpdatePersonInput struct {
+	ID        string
+	FirstName *string
+	LastName  *string
+	BirthDate *time.Time
+	Gender    *string
+	UpdatedAt time.Time
+}

@@ -67,3 +67,39 @@ func (s *Service) Create(ctx context.Context, request CreatePersonRequest) (*Per
 
 	return s.repository.Create(ctx, input)
 }
+
+// MARK: UPDATE PERSON
+func (s *Service) Update(ctx context.Context, request UpdatePersonRequest, id string) (*Person, error) {
+	var birthDate *time.Time
+
+	ParseDate(request.BirthDate)
+
+	input := UpdatePersonInput{
+		ID:        id,
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		BirthDate: birthDate,
+		Gender:    request.Gender,
+		UpdatedAt: time.Now(),
+	}
+
+	return s.repository.Update(ctx, input)
+}
+
+func ParseDate(date *string) (*time.Time, error) {
+
+	if date == nil {
+		return nil, nil
+	}
+
+	parsed, err := time.Parse(
+		"2006-01-02",
+		*date,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &parsed, nil
+}
