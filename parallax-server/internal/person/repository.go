@@ -117,6 +117,7 @@ func (r *Repository) Create(ctx context.Context, request CreatePersonInput) (*Pe
 	return &person, nil
 }
 
+// MARK: UPDATE PERSON
 func (r *Repository) Update(
 	ctx context.Context,
 	request UpdatePersonInput,

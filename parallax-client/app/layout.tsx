@@ -31,9 +31,6 @@ export default function RootLayout({
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-mono", jetbrainsMono.variable, "dark")}
     >
       <body className="min-h-full flex flex-col">
-        <nav className="p-4 bg-gray-800 text-white">
-          <a href="/persons" className="mr-4 hover:text-gray-300">Persons</a>
-        </nav>
         {children}
       </body>
     </html>
