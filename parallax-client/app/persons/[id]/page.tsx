@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -26,18 +27,32 @@ import { Badge } from "@/components/ui/badge";
 import { Pencil, Plus, Building2, Users, FileText, Mail, Globe, User, Phone } from "lucide-react";
 
 import Image from "next/image";
+import { usePersons } from "@/hooks/usePersons";
+import { useParams } from "next/navigation";
+import { formatDateToDDMMYYYY } from "@/lib/utils";
 
 export default function PersonDetailsPage() {
-  // Replace with API data later
-  const person = {
-    id: "1",
-    first_name: "Daniel",
-    last_name: "Ishida",
-    birth_date: "2003-10-30",
-    gender: "Male",
-    created_at: "2026-05-01",
-    updated_at: "2026-05-30",
-  };
+  const params = useParams();
+  const { id } = params;
+  const { person, loading, error, fetchPersonById } = usePersons();
+
+  useEffect(() => {
+    if (id) {
+      fetchPersonById(id as string);
+    }
+  }, [id, fetchPersonById]);
+
+  if (loading) {
+    return <div className="container mx-auto p-6">Loading person details...</div>;
+  }
+
+  if (error) {
+    return <div className="container mx-auto p-6 text-red-500">Error: {error}</div>;
+  }
+
+  if (!person) {
+    return <div className="container mx-auto p-6">Person not found.</div>;
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -73,9 +88,9 @@ export default function PersonDetailsPage() {
 
               <div className="flex gap-2 mt-5">
                 <p className="text-xsm text-muted-foreground">Created At</p>
-                <p>{person.created_at}</p>
+                <p>{formatDateToDDMMYYYY(person.created_at)}</p>
                 <p className="text-xsm text-muted-foreground">Updated At</p>
-                <p>{person.updated_at}</p>
+                <p>{formatDateToDDMMYYYY(person.updated_at)}</p>
               </div>
             </div>
           </div>
@@ -101,7 +116,7 @@ export default function PersonDetailsPage() {
 
       {/* MAIN CONTENT */}
       <Tabs defaultValue="connections">
-        <TabsList>
+        <TabsList className="gap-2 w-full">
         <TabsTrigger value="Truth Layer">
             Truth layer
         </TabsTrigger>

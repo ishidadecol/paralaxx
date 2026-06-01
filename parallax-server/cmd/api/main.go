@@ -40,6 +40,10 @@ func main() {
 		personHandler.GetPeople,
 	)
 
+	router.Get(
+		"/person/{id}",
+		personHandler.GetPersonById,
+	)
 	router.Post(
 		"/person",
 		personHandler.CreatePerson,

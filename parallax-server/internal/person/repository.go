@@ -65,11 +65,18 @@ func (r *Repository) GetAll(ctx context.Context) ([]Person, error) {
 // MARK: GET PERSON BY ID
 func (r *Repository) GetById(ctx context.Context, request GetPersonByIdInput) (*Person, error) {
 	var person Person
-
 	row := r.db.QueryRow(ctx, `
-		SELECT * FROM person
-		WHERE id = $1
-	`, request.ID)
+    SELECT
+        id,
+        first_name,
+        last_name,
+        birth_date,
+        gender,
+        created_at,
+        updated_at
+    FROM person
+    WHERE id = $1
+`, request.ID)
 
 	err := row.Scan(
 		&person.ID,
