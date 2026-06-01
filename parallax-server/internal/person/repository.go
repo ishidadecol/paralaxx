@@ -22,7 +22,7 @@ func (r *Repository) GetAll(ctx context.Context) ([]Person, error) {
 	rows, err :=
 		r.db.Query(ctx, `
 			SELECT
-				id,
+				entity_id,
 				first_name,
 				last_name,
 				birth_date,
@@ -44,7 +44,7 @@ func (r *Repository) GetAll(ctx context.Context) ([]Person, error) {
 
 		err :=
 			rows.Scan(
-				&person.ID,
+				&person.EntityID,
 				&person.FirstName,
 				&person.LastName,
 				&person.BirthDate,
@@ -67,7 +67,7 @@ func (r *Repository) GetById(ctx context.Context, request GetPersonByIdInput) (*
 	var person Person
 	row := r.db.QueryRow(ctx, `
     SELECT
-        id,
+        entity_id,
         first_name,
         last_name,
         birth_date,
@@ -75,11 +75,11 @@ func (r *Repository) GetById(ctx context.Context, request GetPersonByIdInput) (*
         created_at,
         updated_at
     FROM person
-    WHERE id = $1
+    WHERE entity_id = $1
 `, request.ID)
 
 	err := row.Scan(
-		&person.ID,
+		&person.EntityID,
 		&person.FirstName,
 		&person.LastName,
 		&person.BirthDate,
@@ -100,16 +100,17 @@ func (r *Repository) Create(ctx context.Context, request CreatePersonInput) (*Pe
 	var person Person
 
 	err := r.db.QueryRow(ctx, `
-		INSERT INTO person (first_name, last_name, birth_date, gender)
-		VALUES ($1, $2, $3, $4)
-		RETURNING id, first_name, last_name, birth_date, gender, created_at
+		INSERT INTO person (entity_id, first_name, last_name, birth_date, gender)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING entity_id, first_name, last_name, birth_date, gender, created_at
 	`,
+		request.EntityID,
 		request.FirstName,
 		request.LastName,
 		request.BirthDate,
 		request.Gender,
 	).Scan(
-		&person.ID,
+		&person.EntityID,
 		&person.FirstName,
 		&person.LastName,
 		&person.BirthDate,
@@ -144,7 +145,7 @@ func (r *Repository) Update(
 			updated_at = $5
 		WHERE id = $6
 		RETURNING
-			id,
+			entity_id,
 			first_name,
 			last_name,
 			birth_date,
@@ -159,7 +160,7 @@ func (r *Repository) Update(
 		request.UpdatedAt,
 		request.ID,
 	).Scan(
-		&person.ID,
+		&person.EntityID,
 		&person.FirstName,
 		&person.LastName,
 		&person.BirthDate,

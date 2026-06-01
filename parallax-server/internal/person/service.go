@@ -5,15 +5,18 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/ishidadecol/parallax/internal/entity"
 )
 
 type Service struct {
-	repository *Repository
+	repository       *Repository
+	entityRepository *entity.Repository
 }
 
-func NewService(repository *Repository) *Service {
+func NewService(repository *Repository, entityRepository *entity.Repository) *Service {
 	return &Service{
-		repository: repository,
+		repository:       repository,
+		entityRepository: entityRepository,
 	}
 }
 
@@ -42,6 +45,19 @@ func (s *Service) GetPersonById(ctx context.Context, id string) (*Person, error)
 func (s *Service) Create(ctx context.Context, request CreatePersonRequest) (*Person, error) {
 	var birthDate *time.Time
 
+	// Create entity for the person
+	entity, err :=
+		s.entityRepository.Create(
+			ctx,
+			entity.CreateEntityRequest{
+				Type: "person",
+			},
+		)
+
+	if err != nil {
+		return nil, err
+	}
+
 	//If theres a birth date, we need to parse it from string to time.Time
 	if request.BirthDate != nil {
 
@@ -59,6 +75,7 @@ func (s *Service) Create(ctx context.Context, request CreatePersonRequest) (*Per
 	}
 
 	input := CreatePersonInput{
+		EntityID:  entity.ID,
 		FirstName: request.FirstName,
 		LastName:  request.LastName,
 		BirthDate: birthDate,

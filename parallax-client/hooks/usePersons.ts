@@ -75,7 +75,7 @@ export const usePersons = () => {
   
         setPersons((current) =>
           current.map((p) =>
-            p.id === updatedPerson.id ? updatedPerson : p
+            p.entity_id === updatedPerson.entity_id ? updatedPerson : p
           )
         );
   

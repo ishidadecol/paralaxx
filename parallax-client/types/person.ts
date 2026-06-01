@@ -1,5 +1,5 @@
 export type Person = {
-  id: string;
+  entity_id: string;
   first_name: string;
   last_name: string;
   birth_date?: string; // Using string for date for simplicity, can be Date object

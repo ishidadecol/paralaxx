@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ishidadecol/parallax/internal/database"
+	"github.com/ishidadecol/parallax/internal/entity"
 	"github.com/ishidadecol/parallax/internal/person"
 
 	"github.com/go-chi/chi/v5"
@@ -27,10 +28,13 @@ func main() {
 	// Initialize database connection pool
 	db := database.NewPostgresPool()
 
+	//MARK: Entity service and repository
+	entityRepository := entity.NewRepository(db)
+
 	//MARK: Person repository, service, and handler
 	personRepository := person.NewRepository(db)
 
-	personService := person.NewService(personRepository)
+	personService := person.NewService(personRepository, entityRepository)
 
 	personHandler := person.NewHandler(personService)
 
@@ -39,7 +43,6 @@ func main() {
 		"/person",
 		personHandler.GetPeople,
 	)
-
 	router.Get(
 		"/person/{id}",
 		personHandler.GetPersonById,

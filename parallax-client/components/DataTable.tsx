@@ -23,7 +23,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function DataTable<TData extends { id: string }, TValue>({
+export function DataTable<TData extends { entity_id: string }, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -62,7 +62,11 @@ export function DataTable<TData extends { id: string }, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                onClick={() => router.push(`/persons/${row.original.id}`)}
+                onClick={() => {
+                  console.log(row.original)
+                
+                  router.push(`/persons/${row.original.entity_id}`)
+                }}
                 className="cursor-pointer"
               >
                 {row.getVisibleCells().map((cell) => (

@@ -6,6 +6,7 @@ import "time"
 service to the repository layer, where it will be used to create a new person in the database.*/
 
 type CreatePersonInput struct {
+	EntityID  string
 	FirstName string
 	LastName  *string
 	BirthDate *time.Time

@@ -3,7 +3,7 @@ package person
 import "time"
 
 type Person struct {
-	ID string `json:"id"`
+	EntityID string `json:"entity_id"`
 
 	FirstName string  `json:"first_name"`
 	LastName  *string `json:"last_name"`
