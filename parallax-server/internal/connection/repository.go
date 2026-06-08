@@ -17,41 +17,76 @@ func NewRepository(db *pgxpool.Pool) *Repository {
 }
 
 // MARK: CREATE CONNECTION
-func (r *Repository) CreateConnection(ctx context.Context, connection CreateEntityConnectionRequest) (*EntityConnection, error) {
+func (r *Repository) Create(ctx context.Context, connection CreateEntityConnectionInput) (*EntityConnection, error) {
 	var entityConn EntityConnection
 
 	err := r.db.QueryRow(ctx, `
 		INSERT INTO entity_connection (
-			source_type,
-			source_id,
-			target_type,
-			target_id,
+			source_entity_id,
+			target_entity_id,
 			relationship_type,
 			start_date,
 			end_date)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		RETURNING id, source_type, source_id, target_type, target_id, relationship_type, start_date, end_date, created_at, updated_at
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, source_entity_id, target_entity_id, relationship_type, start_date, end_date, created_at, updated_at
 	`,
-		connection.SourceType,
-		connection.SourceID,
-		connection.TargetType,
-		connection.TargetID,
+		connection.SourceEntityID,
+		connection.TargetEntityID,
 		connection.RelationshipType,
 		connection.StartDate,
 		connection.EndDate,
 	).Scan(
 		&entityConn.ID,
-		&entityConn.SourceType,
-		&entityConn.SourceID,
-		&entityConn.TargetType,
-		&entityConn.TargetID,
+		&entityConn.SourceEntityID,
+		&entityConn.TargetEntityID,
 		&entityConn.RelationshipType,
 		&entityConn.StartDate,
 		&entityConn.EndDate,
+		&entityConn.CreatedAt,
+		&entityConn.UpdatedAt,
 	)
 
 	if err != nil {
 		return nil, err
 	}
 	return &entityConn, nil
+}
+
+// MARK: GET CONNECTIONS
+func (r *Repository) GetAll(ctx context.Context) ([]EntityConnection, error) {
+	rows, err := r.db.Query(ctx, `
+		SELECT id, source_entity_id, target_entity_id, relationship_type, start_date, end_date, created_at, updated_at
+		FROM entity_connection
+	`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var connections []EntityConnection
+
+	for rows.Next() {
+		var entityConn EntityConnection
+
+		err := rows.Scan(
+			&entityConn.ID,
+			&entityConn.SourceEntityID,
+			&entityConn.TargetEntityID,
+			&entityConn.RelationshipType,
+			&entityConn.StartDate,
+			&entityConn.EndDate,
+			&entityConn.CreatedAt,
+			&entityConn.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		connections = append(connections, entityConn)
+	}
+
+	return connections, nil
 }

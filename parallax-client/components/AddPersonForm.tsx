@@ -9,6 +9,7 @@ interface AddPersonFormProps {
 }
 
 const AddPersonForm: React.FC<AddPersonFormProps> = ({ onAddPerson, onSuccess }) => {
+  //TODO: use person hook
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [gender, setGender] = useState("");
@@ -99,7 +100,7 @@ const AddPersonForm: React.FC<AddPersonFormProps> = ({ onAddPerson, onSuccess })
           />
         </div>
       </div>
-      <Button className="w-full py-2 px-4">
+      <Button className="w-full py-2 ">
         {loading ? "Adding..." : "Add Person"}
       </Button>
     </form>

@@ -30,11 +30,14 @@ import Image from "next/image";
 import { usePersons } from "@/hooks/usePersons";
 import { useParams } from "next/navigation";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
+import { AddConnectionDialog } from "../AddConnectionDialog";
+import { useEntityConnection } from "@/hooks/useEntityConnection";
 
 export default function PersonDetailsPage() {
   const params = useParams();
   const { id } = params;
   const { person, loading, error, fetchPersonById } = usePersons();
+  const { connections} = useEntityConnection()
 
   useEffect(() => {
     if (id) {
@@ -106,10 +109,7 @@ export default function PersonDetailsPage() {
               Add Note
             </Button>
 
-            <Button variant="outline">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Connection
-            </Button>
+            <AddConnectionDialog></AddConnectionDialog>
           </div>
         </CardContent>
       </Card>
@@ -171,29 +171,13 @@ export default function PersonDetailsPage() {
                 </TableHeader>
 
                 <TableBody>
-                  <TableRow>
-                    <TableCell>Fernanda</TableCell>
-                    <TableCell>
-                      <Badge>DATED</Badge>
-                    </TableCell>
-                    <TableCell>High</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell>João</TableCell>
-                    <TableCell>
-                      <Badge>FRIEND</Badge>
-                    </TableCell>
-                    <TableCell>Medium</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell>Pedro</TableCell>
-                    <TableCell>
-                      <Badge>WORKED_WITH</Badge>
-                    </TableCell>
-                    <TableCell>High</TableCell>
-                  </TableRow>
+                {connections.map((connection) => (
+                    <TableRow key={connection.id}>
+                      <TableCell>{connection.relationshipType}</TableCell>
+                      {/* <TableCell>{person.first_name}</TableCell>                     */}
+                    </TableRow>
+                  )
+                )}
                 </TableBody>
               </Table>
             </CardContent>

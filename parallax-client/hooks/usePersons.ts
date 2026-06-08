@@ -39,6 +39,7 @@ export const usePersons = () => {
     []
   );
 
+  //TODO: Separate fetchPersons and fetchPersonById into different hooks for better separation of concerns
   // This function is now for manual re-fetching, not for initial load
   const fetchPersons = useCallback(async () => {
     setLoading(true);

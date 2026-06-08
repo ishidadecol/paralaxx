@@ -5,11 +5,8 @@ import "time"
 type EntityConnection struct {
 	ID string `json:"id"`
 
-	SourceType string `json:"source_type"`
-	SourceID   string `json:"source_id"`
-
-	TargetType string `json:"target_type"`
-	TargetID   string `json:"target_id"`
+	SourceEntityID string `json:"source_id"`
+	TargetEntityID string `json:"target_id"`
 
 	RelationshipType string `json:"relationship_type"`
 

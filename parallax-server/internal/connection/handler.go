@@ -15,6 +15,7 @@ func NewHandler(service *Service) *Handler {
 	}
 }
 
+// MARK: CREATE CONNECTION
 func (h *Handler) CreateConnection(w http.ResponseWriter, r *http.Request) {
 	var request CreateEntityConnectionRequest
 
@@ -30,7 +31,7 @@ func (h *Handler) CreateConnection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	connection, err := h.service.Create(r.Context(), request)
+	connection, err := h.service.CreateConnection(r.Context(), request)
 
 	if err != nil {
 		http.Error(
@@ -43,4 +44,27 @@ func (h *Handler) CreateConnection(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(connection)
+}
+
+// MARK: GET ALL CONNECTIONS
+func (h *Handler) GetAllConnections(w http.ResponseWriter, r *http.Request) {
+
+	connections, err := h.service.GetConnections(r.Context())
+
+	if err != nil {
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	json.NewEncoder(w).Encode(connections)
 }

@@ -87,9 +87,11 @@ func (s *Service) Create(ctx context.Context, request CreatePersonRequest) (*Per
 
 // MARK: UPDATE PERSON
 func (s *Service) Update(ctx context.Context, request UpdatePersonRequest, id string) (*Person, error) {
-	var birthDate *time.Time
+	birthDate, err := ParseDate(request.BirthDate)
 
-	ParseDate(request.BirthDate)
+	if err != nil {
+		return nil, err
+	}
 
 	input := UpdatePersonInput{
 		ID:        id,

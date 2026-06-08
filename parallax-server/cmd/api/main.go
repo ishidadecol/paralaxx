@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/ishidadecol/parallax/internal/connection"
 	"github.com/ishidadecol/parallax/internal/database"
 	"github.com/ishidadecol/parallax/internal/entity"
 	"github.com/ishidadecol/parallax/internal/person"
@@ -14,7 +15,8 @@ import (
 
 func main() {
 	router := chi.NewRouter()
-
+	//TODO: ORGANIZE ROUTING
+	//TODO: add logging middleware
 	// Add CORS middleware
 	router.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"},
@@ -28,17 +30,22 @@ func main() {
 	// Initialize database connection pool
 	db := database.NewPostgresPool()
 
+	// Enity connection repository, service and handler
+	entityConnectionRepository := connection.NewRepository(db)
+	entityConnectionService := connection.NewService(entityConnectionRepository)
+	entityConnectionHandler := connection.NewHandler(entityConnectionService)
+
 	//MARK: Entity service and repository
 	entityRepository := entity.NewRepository(db)
 
 	//MARK: Person repository, service, and handler
 	personRepository := person.NewRepository(db)
-
 	personService := person.NewService(personRepository, entityRepository)
-
 	personHandler := person.NewHandler(personService)
 
 	// Define API routes
+
+	//MARK: PERSON ROUTES
 	router.Get(
 		"/person",
 		personHandler.GetPeople,
@@ -50,6 +57,16 @@ func main() {
 	router.Post(
 		"/person",
 		personHandler.CreatePerson,
+	)
+
+	//MARK: ENTITY CONNECTION ROUTES
+	router.Get(
+		"/connection",
+		entityConnectionHandler.GetAllConnections,
+	)
+	router.Post(
+		"/connection",
+		entityConnectionHandler.CreateConnection,
 	)
 
 	log.Println("API running on :8080")
