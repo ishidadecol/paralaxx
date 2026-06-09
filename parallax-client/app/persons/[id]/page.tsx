@@ -31,6 +31,7 @@ import { usePersons } from "@/hooks/usePersons";
 import { useParams } from "next/navigation";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
 import { AddConnectionDialog } from "../AddConnectionDialog";
+import { connection } from "next/server";
 
 export default function PersonDetailsPage() {
   const params = useParams();
@@ -174,12 +175,19 @@ export default function PersonDetailsPage() {
                 </TableHeader>
 
                 <TableBody>
-                {connections.map((connection) => (
-                    <TableRow key={connection.id}>
-                      <TableCell>{connection.relationshipType}</TableCell>
-                      <TableCell>{connection.targetName}</TableCell>                    
+                {connections?.length ? (
+                    connections.map((connection) => (
+                        <TableRow key={connection.id}>
+                        <TableCell>{connection.relationshipType}</TableCell>
+                        <TableCell>{connection.targetName}</TableCell>                    
+                        </TableRow>
+                    ))
+                ) : (
+                    <TableRow>
+                        <TableCell colSpan={2} className="h-24 text-center">
+                        No connections found.
+                        </TableCell>
                     </TableRow>
-                  )
                 )}
                 </TableBody>
               </Table>

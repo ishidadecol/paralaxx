@@ -66,7 +66,7 @@ export function DataTable<TData extends { entity_id: string }, TValue>({
                   console.log(row.original)
                 
                   router.push(`/persons/${row.original.entity_id}`)
-                }}
+                }}  
                 className="cursor-pointer"
               >
                 {row.getVisibleCells().map((cell) => (
