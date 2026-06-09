@@ -14,3 +14,14 @@ export type CreatePersonRequest = {
   gender?: string;
   birth_date?: string; // Using string for date for simplicity
 };
+
+export type GetPersonConnectionsResponse = {
+  id: string;
+
+  relationshipType: string;
+
+  targetEntityId: string;
+
+  targetName: string;
+  targetType: string;
+}

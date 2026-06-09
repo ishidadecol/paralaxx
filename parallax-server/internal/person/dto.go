@@ -13,3 +13,14 @@ type UpdatePersonRequest struct {
 	Gender    *string `json:"gender"`
 	BirthDate *string `json:"birth_date"`
 }
+
+type GetPersonConnectionsResponse struct {
+	ID string `json:"id"`
+
+	RelationshipType string `json:"relationshipType"`
+
+	TargetEntityID string `json:"targetEntityId"`
+
+	TargetName string `json:"targetName"`
+	TargetType string `json:"targetType"`
+}

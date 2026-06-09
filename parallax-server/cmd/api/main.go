@@ -54,6 +54,10 @@ func main() {
 		"/person/{id}",
 		personHandler.GetPersonById,
 	)
+	router.Get(
+		"/person/{id}/connections",
+		personHandler.GetConnectionsForPerson,
+	)
 	router.Post(
 		"/person",
 		personHandler.CreatePerson,

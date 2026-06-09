@@ -175,3 +175,51 @@ func (r *Repository) Update(
 
 	return &person, nil
 }
+
+// MARK: GET CONNECTIONS FOR PERSON
+func (r *Repository) GetConnectionsForPerson(
+	ctx context.Context,
+	request GetPersonConnectionsInput,
+) ([]GetPersonConnectionsResponse, error) {
+
+	rows, err := r.db.Query(ctx, `
+		SELECT
+			ec.id,
+			ec.relationship_type,
+			ec.target_entity_id,
+			p.first_name || ' ' || p.last_name AS target_name,
+			'person' AS target_type
+		FROM entity_connection ec
+		JOIN person p
+			ON p.entity_id = ec.target_entity_id
+		WHERE ec.source_entity_id = $1
+	`, request.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var connections []GetPersonConnectionsResponse
+
+	for rows.Next() {
+		var connection GetPersonConnectionsResponse
+
+		err := rows.Scan(
+			&connection.ID,
+			&connection.RelationshipType,
+			&connection.TargetEntityID,
+			&connection.TargetName,
+			&connection.TargetType,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		connections = append(connections, connection)
+	}
+
+	return connections, nil
+}

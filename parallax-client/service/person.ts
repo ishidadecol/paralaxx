@@ -1,4 +1,4 @@
-import { Person, CreatePersonRequest } from "../types/person";
+import { Person, CreatePersonRequest, GetPersonConnectionsResponse } from "../types/person";
 
 const API_BASE_URL = "http://localhost:8080"; 
 
@@ -57,6 +57,15 @@ export const updatePerson = async (id: string, personData: Partial<CreatePersonR
     throw new Error(
       `Error updating person with ID ${id}: ${response.statusText} - ${errorBody}`
     );
+  }
+  return response.json();
+}
+
+//MARK: GET PERSON CONNECTIONS
+export const getPersonConnections = async (id: string): Promise<GetPersonConnectionsResponse[]> => {
+  const response = await fetch(`${API_BASE_URL}/person/${id}/connections`);
+  if (!response.ok) {
+    throw new Error(`Error fetching connections for person with ID ${id}: ${response.statusText}`);
   }
   return response.json();
 }

@@ -19,6 +19,10 @@ type GetPersonByIdInput struct {
 	ID string
 }
 
+type GetPersonConnectionsInput struct {
+	ID string
+}
+
 type UpdatePersonInput struct {
 	ID        string
 	FirstName *string

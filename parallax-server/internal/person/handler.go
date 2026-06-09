@@ -143,3 +143,38 @@ func (h *Handler) UpdatePerson(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(person)
 }
+
+// MARK: GET CONNECTIONS FOR PERSON
+func (h *Handler) GetConnectionsForPerson(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	connections, err := h.service.GetConnectionsForPerson(r.Context(), id)
+
+	if err != nil {
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.Error(
+				w,
+				"person not found",
+				http.StatusNotFound,
+			)
+
+			return
+		}
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	json.NewEncoder(w).Encode(connections)
+}

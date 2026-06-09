@@ -31,20 +31,24 @@ import { usePersons } from "@/hooks/usePersons";
 import { useParams } from "next/navigation";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
 import { AddConnectionDialog } from "../AddConnectionDialog";
-import { useEntityConnection } from "@/hooks/useEntityConnection";
 
 export default function PersonDetailsPage() {
   const params = useParams();
   const { id } = params;
-  const { person, loading, error, fetchPersonById } = usePersons();
-  const { connections} = useEntityConnection()
+  const { person, loading, error, fetchPersonById, getConnectionsForPerson,connections  } = usePersons();
+
 
   useEffect(() => {
     if (id) {
       fetchPersonById(id as string);
     }
   }, [id, fetchPersonById]);
-
+  
+   useEffect(() => {
+    if (id) {
+      getConnectionsForPerson(id as string);
+    }
+  }, [id, getConnectionsForPerson]);
   if (loading) {
     return <div className="container mx-auto p-6">Loading person details...</div>;
   }
@@ -164,9 +168,8 @@ export default function PersonDetailsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Person</TableHead>
                     <TableHead>Relationship</TableHead>
-                    <TableHead>Confidence</TableHead>
+                    <TableHead>Name</TableHead>
                   </TableRow>
                 </TableHeader>
 
@@ -174,7 +177,7 @@ export default function PersonDetailsPage() {
                 {connections.map((connection) => (
                     <TableRow key={connection.id}>
                       <TableCell>{connection.relationshipType}</TableCell>
-                      {/* <TableCell>{person.first_name}</TableCell>                     */}
+                      <TableCell>{connection.targetName}</TableCell>                    
                     </TableRow>
                   )
                 )}

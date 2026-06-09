@@ -1,13 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
-import { Person, CreatePersonRequest } from "../types/person";
-import { getPeople, createPerson, getPersonById, updatePerson } from "../service/person";
+import { Person, CreatePersonRequest, GetPersonConnectionsResponse } from "../types/person";
+import {
+  getPeople,
+  createPerson,
+  getPersonById,
+  updatePerson,
+  getPersonConnections,
+} from "../service/person";
 
 export const usePersons = () => {
   const [persons, setPersons] = useState<Person[]>([]); // State for list of persons
   const [person, setPerson] = useState<Person | null>(null); // New state for single person
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
- 
+  const [connections, setConnections] = useState<GetPersonConnectionsResponse[]>([]); 
 
   // Initial data fetch on mount
   useEffect(() => {
@@ -18,7 +24,9 @@ export const usePersons = () => {
         const data = await getPeople();
         setPersons(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -26,18 +34,17 @@ export const usePersons = () => {
     loadPersons();
   }, []); // Empty dependency array means it runs once on mount
 
-  const addPerson = useCallback(
-    async (personData: CreatePersonRequest) => {
-      try {
-        await createPerson(personData);
-        // No need to update persons state here, fetchPersons will do it
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
-        throw err; // Re-throw to allow component to handle
-      }
-    },
-    []
-  );
+  const addPerson = useCallback(async (personData: CreatePersonRequest) => {
+    try {
+      await createPerson(personData);
+      // No need to update persons state here, fetchPersons will do it
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
+      throw err; // Re-throw to allow component to handle
+    }
+  }, []);
 
   //TODO: Separate fetchPersons and fetchPersonById into different hooks for better separation of concerns
   // This function is now for manual re-fetching, not for initial load
@@ -48,7 +55,9 @@ export const usePersons = () => {
       const data = await getPeople();
       setPersons(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -61,7 +70,9 @@ export const usePersons = () => {
       const data = await getPersonById(id);
       setPerson(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -71,28 +82,53 @@ export const usePersons = () => {
     async (id: string, personData: Partial<CreatePersonRequest>) => {
       try {
         const updatedPerson = await updatePerson(id, personData);
-  
+
         setPerson(updatedPerson);
-  
+
         setPersons((current) =>
           current.map((p) =>
             p.entity_id === updatedPerson.entity_id ? updatedPerson : p
           )
         );
-  
+
         return updatedPerson;
       } catch (err) {
         setError(
-          err instanceof Error
-            ? err.message
-            : "An unknown error occurred"
+          err instanceof Error ? err.message : "An unknown error occurred"
         );
-  
+
         throw err;
       }
     },
     []
   );
 
-  return { person, persons, loading, error, addPerson, fetchPersons, fetchPersonById, editPerson };
+  //MARK: GET CONNECTIONS FOR A PERSON
+  const getConnectionsForPerson = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getPersonConnections(id);
+      setConnections(data);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    person,
+    persons,
+    loading,
+    error,
+    addPerson,
+    fetchPersons,
+    fetchPersonById,
+    editPerson,
+    getConnectionsForPerson,
+    connections,
+  };
 };

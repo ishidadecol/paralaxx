@@ -105,6 +105,14 @@ func (s *Service) Update(ctx context.Context, request UpdatePersonRequest, id st
 	return s.repository.Update(ctx, input)
 }
 
+// MARK: GET CONNECTIONS FOR PERSON
+func (s *Service) GetConnectionsForPerson(ctx context.Context, id string) ([]GetPersonConnectionsResponse, error) {
+	input := GetPersonConnectionsInput{
+		ID: id,
+	}
+	return s.repository.GetConnectionsForPerson(ctx, input)
+}
+
 func ParseDate(date *string) (*time.Time, error) {
 
 	if date == nil {
