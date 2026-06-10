@@ -74,3 +74,12 @@ func ParseDate(date *string) (*time.Time, error) {
 
 	return &parsed, nil
 }
+
+// MARK: GET CONNECTIONS FOR ENTITY
+func (s *Service) GetConnectionsForEntity(ctx context.Context, request GetEntityConnectionsRequest) ([]EntityConnectionDetail, error) {
+	input := GetEntityConnectionsInput{
+		EntityID:   request.EntityID,
+		TypeFilter: request.TypeFilter,
+	}
+	return s.repository.GetConnectionsForEntity(ctx, input)
+}

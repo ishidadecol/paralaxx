@@ -34,6 +34,7 @@ export const usePersons = () => {
     loadPersons();
   }, []); // Empty dependency array means it runs once on mount
 
+  //MARK: ADD PERSON HOOK
   const addPerson = useCallback(async (personData: CreatePersonRequest) => {
     try {
       await createPerson(personData);
@@ -48,6 +49,7 @@ export const usePersons = () => {
 
   //TODO: Separate fetchPersons and fetchPersonById into different hooks for better separation of concerns
   // This function is now for manual re-fetching, not for initial load
+  //MARK: FETCH ALL PERSONS
   const fetchPersons = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -63,6 +65,7 @@ export const usePersons = () => {
     }
   }, []);
 
+  //MARK: FETCH A PERSON BY ID 
   const fetchPersonById = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
@@ -78,6 +81,7 @@ export const usePersons = () => {
     }
   }, []);
 
+  //MARK: EDIT PERSON HOOK
   const editPerson = useCallback(
     async (id: string, personData: Partial<CreatePersonRequest>) => {
       try {

@@ -9,3 +9,8 @@ type CreateEntityConnectionInput struct {
 	StartDate        *time.Time
 	EndDate          *time.Time
 }
+
+type GetEntityConnectionsInput struct {
+	EntityID   string
+	TypeFilter []string
+}

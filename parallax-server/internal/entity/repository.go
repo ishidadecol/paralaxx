@@ -21,14 +21,15 @@ func (r *Repository) Create(ctx context.Context, entity CreateEntityRequest) (*E
 	var newEntity Entity
 
 	err := r.db.QueryRow(ctx, `
-		INSERT INTO entity (type)
-		VALUES ($1)
-		RETURNING id, type, created_at
+		INSERT INTO entity (type, display_name)
+		VALUES ($1, $2)
+		RETURNING id, type, display_name, created_at
 	`,
 		entity.Type,
 	).Scan(
 		&newEntity.ID,
 		&newEntity.Type,
+		&newEntity.DisplayName,
 		&newEntity.CreatedAt,
 	)
 

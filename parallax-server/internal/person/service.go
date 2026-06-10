@@ -46,11 +46,17 @@ func (s *Service) Create(ctx context.Context, request CreatePersonRequest) (*Per
 	var birthDate *time.Time
 
 	// Create entity for the person
+	displayName := request.FirstName
+	if request.LastName != nil {
+		displayName = displayName + " " + *request.LastName
+	}
+
 	entity, err :=
 		s.entityRepository.Create(
 			ctx,
 			entity.CreateEntityRequest{
-				Type: "person",
+				Type:        "person",
+				DisplayName: displayName,
 			},
 		)
 
@@ -92,6 +98,8 @@ func (s *Service) Update(ctx context.Context, request UpdatePersonRequest, id st
 	if err != nil {
 		return nil, err
 	}
+
+	//TODO: We should also update the display name of the entity if the first name or last name is updated
 
 	input := UpdatePersonInput{
 		ID:        id,

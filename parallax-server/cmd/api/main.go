@@ -68,6 +68,12 @@ func main() {
 		"/connection",
 		entityConnectionHandler.GetAllConnections,
 	)
+
+	router.Get(
+		"/connection/entity/{id}",
+		entityConnectionHandler.GetConnectionsOfAnEntity,
+	)
+
 	router.Post(
 		"/connection",
 		entityConnectionHandler.CreateConnection,

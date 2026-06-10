@@ -31,13 +31,13 @@ import { usePersons } from "@/hooks/usePersons";
 import { useParams } from "next/navigation";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
 import { AddConnectionDialog } from "../AddConnectionDialog";
-import { connection } from "next/server";
+import { useEntityConnectionDetail } from "@/hooks/useConnectionDetail";
 
 export default function PersonDetailsPage() {
   const params = useParams();
   const { id } = params;
-  const { person, loading, error, fetchPersonById, getConnectionsForPerson,connections  } = usePersons();
-
+  const { person, loading, error, fetchPersonById } = usePersons();
+  const { connectionDetail } = useEntityConnectionDetail(id as string);
 
   useEffect(() => {
     if (id) {
@@ -45,11 +45,6 @@ export default function PersonDetailsPage() {
     }
   }, [id, fetchPersonById]);
   
-   useEffect(() => {
-    if (id) {
-      getConnectionsForPerson(id as string);
-    }
-  }, [id, getConnectionsForPerson]);
   if (loading) {
     return <div className="container mx-auto p-6">Loading person details...</div>;
   }
@@ -175,8 +170,8 @@ export default function PersonDetailsPage() {
                 </TableHeader>
 
                 <TableBody>
-                {connections?.length ? (
-                    connections.map((connection) => (
+                {connectionDetail?.length ? (
+                    connectionDetail.map((connection) => (
                         <TableRow key={connection.id}>
                         <TableCell>{connection.relationshipType}</TableCell>
                         <TableCell>{connection.targetName}</TableCell>                    

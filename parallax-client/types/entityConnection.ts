@@ -16,3 +16,17 @@ export type CreateEntityConnectionRequest = {
     startDate?: string | null, 
     endDate?: string | null, 
 }
+
+export type EntityConnectionDetail = {
+    id: string;
+
+    relationshipType: string;
+  
+    targetEntityId: string;
+  
+    targetName: string;
+    targetType: string;
+    
+    startDate?: string | null, 
+    endDate?: string | null, 
+}

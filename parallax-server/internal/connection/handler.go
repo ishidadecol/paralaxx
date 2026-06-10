@@ -3,6 +3,8 @@ package connection
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type Handler struct {
@@ -65,6 +67,36 @@ func (h *Handler) GetAllConnections(w http.ResponseWriter, r *http.Request) {
 		"Content-Type",
 		"application/json",
 	)
+
+	json.NewEncoder(w).Encode(connections)
+}
+
+// MARK: GET CONNECTIONS OF AN ENTITY
+func (h *Handler) GetConnectionsOfAnEntity(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	typeFilter := r.URL.Query()["type"]
+
+	input := GetEntityConnectionsRequest{
+		EntityID:   id,
+		TypeFilter: typeFilter,
+	}
+
+	connections, err := h.service.GetConnectionsForEntity(
+		r.Context(),
+		input,
+	)
+
+	if err != nil {
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 
 	json.NewEncoder(w).Encode(connections)
 }
