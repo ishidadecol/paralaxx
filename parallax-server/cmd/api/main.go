@@ -46,7 +46,7 @@ func main() {
 
 	//MARK: Company repository and handler
 	companyRepository := company.NewRepository(db)
-	companyService := company.NewService(companyRepository)
+	companyService := company.NewService(companyRepository, entityRepository)
 	companyHandler := company.NewHandler(companyService)
 
 	// Define API routes
@@ -89,6 +89,11 @@ func main() {
 	router.Get(
 		"/company",
 		companyHandler.GetAllCompanies,
+	)
+
+	router.Post(
+		"/company",
+		companyHandler.CreateCompany,
 	)
 
 	log.Println("API running on :8080")

@@ -31,3 +31,34 @@ func (h *Handler) GetAllCompanies(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(companies)
 }
+
+// MARK: CREATE COMPANY
+func (h *Handler) CreateCompany(w http.ResponseWriter, r *http.Request) {
+	var request CreateCompanyRequest
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	company, err := h.service.CreateCompany(r.Context(), request)
+
+	if err != nil {
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	json.NewEncoder(w).Encode(company)
+}
