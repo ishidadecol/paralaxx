@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/ishidadecol/parallax/internal/company"
 	"github.com/ishidadecol/parallax/internal/connection"
 	"github.com/ishidadecol/parallax/internal/database"
 	"github.com/ishidadecol/parallax/internal/entity"
@@ -43,6 +44,11 @@ func main() {
 	personService := person.NewService(personRepository, entityRepository)
 	personHandler := person.NewHandler(personService)
 
+	//MARK: Company repository and handler
+	companyRepository := company.NewRepository(db)
+	companyService := company.NewService(companyRepository)
+	companyHandler := company.NewHandler(companyService)
+
 	// Define API routes
 
 	//MARK: PERSON ROUTES
@@ -77,6 +83,12 @@ func main() {
 	router.Post(
 		"/connection",
 		entityConnectionHandler.CreateConnection,
+	)
+
+	//MARK: COMPANY ROUTES
+	router.Get(
+		"/company",
+		companyHandler.GetAllCompanies,
 	)
 
 	log.Println("API running on :8080")
