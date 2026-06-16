@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,17 +29,13 @@ import {
 import { useEntityConnection } from "@/hooks/useEntityConnection";
 import { usePersons } from "@/hooks/usePersons";
 import { useParams } from "next/navigation";
+import { useEntity } from "@/hooks/useEntity";
 
-type EntityType = "person";
-
-const relationshipOptions: Record<EntityType, string[]> = {
-  person: ["KNOWS", "WORKED_WITH", "FAMILY_WITH"],
-};
+type EntityType = "person" | "company";
 
 export function AddConnectionDialog() {
   //Connection hook
-  const { connections, loading, addEntityConnection } = useEntityConnection();
-
+  const { addEntityConnection } = useEntityConnection();
   const { persons } = usePersons();
 
   const params = useParams();
@@ -49,6 +45,11 @@ export function AddConnectionDialog() {
   const [endDate, setEndDate] = useState("");
 
   const [entityType, setEntityType] = useState<EntityType | "">("");
+  const filters = useMemo(
+    () => (entityType ? [entityType] : []),
+    [entityType]
+  );
+  const { entityDisplayNames } = useEntity(filters);
 
   const [targetEntityId, setTargetEntityId] = useState("");
 
@@ -118,6 +119,7 @@ export function AddConnectionDialog() {
 
                 <SelectContent>
                   <SelectItem value="person">Person</SelectItem>
+                  <SelectItem value="company">Company</SelectItem>
                 </SelectContent>
               </Select>
             </Field>
@@ -135,36 +137,28 @@ export function AddConnectionDialog() {
                 </SelectTrigger>
 
                 <SelectContent>
-                  {persons.map((person) => (
-                    <SelectItem key={person.entity_id} value={person.entity_id}>
-                      {person.first_name} {person.last_name}
-                    </SelectItem>
-                  ))}
+                    {entityDisplayNames != null ? (
+                        entityDisplayNames.map((entity) => (
+                            <SelectItem key={entity.id} value={entity.id}>
+                                {entity.displayName}
+                            </SelectItem>
+                    ))
+                    ) : (
+                        <SelectItem value="__empty__" >
+                            No entities found
+                        </SelectItem>
+                    )}
                 </SelectContent>
               </Select>
             </Field>
 
             <Field>
               <Label>Relationship</Label>
-
-              <Select
-                value={relationshipType}
-                onValueChange={setRelationshipType}
-                disabled={!entityType}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select relationship" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {entityType &&
-                    relationshipOptions[entityType]?.map((relationship) => (
-                      <SelectItem key={relationship} value={relationship}>
-                        {relationship}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
+              <Input
+                type="text"
+                name="relationshipType"
+                onChange={(e) => setRelationshipType(e.target.value)}
+              />
             </Field>
 
             <Field>

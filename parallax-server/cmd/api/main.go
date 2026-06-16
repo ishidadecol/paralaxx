@@ -38,6 +38,8 @@ func main() {
 
 	//MARK: Entity service and repository
 	entityRepository := entity.NewRepository(db)
+	entityService := entity.NewService(entityRepository)
+	entityHandler := entity.NewHandler(entityService)
 
 	//MARK: Person repository, service, and handler
 	personRepository := person.NewRepository(db)
@@ -67,6 +69,12 @@ func main() {
 	router.Post(
 		"/person",
 		personHandler.CreatePerson,
+	)
+
+	//MARK: ENTITY ROUTES
+	router.Get(
+		"/entity/display-names",
+		entityHandler.GetAllEntitiesNames,
 	)
 
 	//MARK: ENTITY CONNECTION ROUTES

@@ -32,12 +32,15 @@ import { useParams } from "next/navigation";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
 import { AddConnectionDialog } from "../AddConnectionDialog";
 import { useEntityConnectionDetail } from "@/hooks/useConnectionDetail";
+import { useCompany } from "@/hooks/useCompany";
 
 export default function PersonDetailsPage() {
   const params = useParams();
   const { id } = params;
+
   const { person, loading, error, fetchPersonById } = usePersons();
   const { connectionDetail } = useEntityConnectionDetail(id as string);
+  const { companies } =useCompany();
 
   useEffect(() => {
     if (id) {
@@ -202,24 +205,32 @@ export default function PersonDetailsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Company</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Period</TableHead>
+                    <TableHead>Company Name</TableHead>
+                    <TableHead>Legal Name</TableHead>
+                    <TableHead>Industry</TableHead>
+                    <TableHead>CNPJ</TableHead>
+                    <TableHead>Website</TableHead>
                   </TableRow>
                 </TableHeader>
 
                 <TableBody>
-                  <TableRow>
-                    <TableCell>Lumi Health</TableCell>
-                    <TableCell>Founder</TableCell>
-                    <TableCell>2024 - Present</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell>Acme Corp</TableCell>
-                    <TableCell>Software Engineer</TableCell>
-                    <TableCell>2022 - 2024</TableCell>
-                  </TableRow>
+                {companies?.length ? (
+                    companies.map((companies) => (
+                        <TableRow key={companies.entity_id}>
+                        <TableCell>{companies.name}</TableCell>
+                        <TableCell>{companies.legal_name}</TableCell>
+                        <TableCell>{companies.industry}</TableCell>
+                        <TableCell>{companies.cnpj}</TableCell>     
+                        <TableCell>{companies.website}</TableCell>
+                        </TableRow>
+                    ))
+                ) : (
+                    <TableRow>
+                        <TableCell colSpan={5} className="h-24 text-center">
+                        No companies found.
+                        </TableCell>
+                    </TableRow>
+                )}
                 </TableBody>
               </Table>
             </CardContent>

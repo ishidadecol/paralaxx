@@ -5,3 +5,8 @@ export type Entity = {
     createdAt : string,
     updatedAt : string,
 }
+
+export type EntityLookUp = {
+    id: string;
+    displayName: string;
+}

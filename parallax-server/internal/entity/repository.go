@@ -39,3 +39,57 @@ func (r *Repository) Create(ctx context.Context, entity CreateEntityRequest) (*E
 
 	return &newEntity, nil
 }
+
+// MARK: GET ENTITIES NAMES
+func (r *Repository) GetEntityNames(ctx context.Context, input GetEntitiesNamesInput) ([]EntityLookup, error) {
+	query := `
+	SELECT
+		id,
+		display_name,
+		type
+	FROM entity
+`
+
+	args := []any{}
+
+	if len(input.TypeFilter) > 0 {
+		query += `
+		WHERE type = ANY($1)
+	`
+		args = append(args, input.TypeFilter)
+	}
+
+	query += `
+	ORDER BY display_name
+`
+
+	rows, err := r.db.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var entities []EntityLookup
+
+	for rows.Next() {
+		var entity EntityLookup
+
+		err := rows.Scan(
+			&entity.ID,
+			&entity.DisplayName,
+			&entity.Type,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		entities = append(entities, entity)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return entities, nil
+}
